@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkripsiKu AI Pro - Generator & Asisten Judul Skripsi Interaktif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eep2ff',
+                            100: '#e0e7ff',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card-hover {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/25 ring-1 ring-white/20">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-extrabold text-lg text-white tracking-tight">SkripsiGen <span class="text-indigo-400">AI</span> <span class="text-xs font-semibold px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">PRO</span></h1>
+                    </div>
+                    <p class="text-xs text-slate-400 hidden sm:block">Generator Judul Skripsi, Breakdown Proposal & Asisten Dospem Simulator</p>
+                </div>
+            </div>
+
+            <!-- Header Quick Stats & Actions -->
+            <div class="flex items-center gap-3">
+                <button onclick="triggerQuickRandomize()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/80 px-3 py-2 rounded-xl transition flex items-center gap-2 font-medium">
+                    <i class="fa-solid fa-dice text-indigo-400"></i>
+                    <span class="hidden md:inline">Inspirasi Cepat</span>
+                </button>
+                
+                <button onclick="switchTab('saved')" class="relative text-xs bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 px-3.5 py-2 rounded-xl transition flex items-center gap-2 font-semibold">
+                    <i class="fa-solid fa-bookmark text-amber-400"></i>
+                    <span>Tersimpan</span>
+                    <span id="savedBadgeCount" class="bg-indigo-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-1">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Application Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- LEFT PANEL: Input Form Parameters -->
+        <section class="lg:col-span-5 space-y-6">
+            <div class="glass-card rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-indigo-600/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-indigo-400"></i> Parameter Penelitian
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Tentukan variabel utama untuk racikan judul akademis.</p>
+                    </div>
+                    <button type="button" onclick="resetForm()" class="text-xs text-slate-400 hover:text-rose-400 transition flex items-center gap-1" title="Reset Form">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
+
+                <form id="generatorForm" class="space-y-4">
+                    <!-- Rumpun Ilmu / Jurusan -->
+                    <div>
+                        <label for="jurusan" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                            <span>1. Rumpun Ilmu / Program Studi</span>
+                            <span class="text-[10px] text-indigo-400 font-normal">Wajib</span>
+                        </label>
+                        <div class="relative">
+                            <select id="jurusan" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 appearance-none cursor-pointer">
+                                <option value="informatika">💻 Tek. Informatika / Sistem Informasi / Data</option>
+                                <option value="ekonomi">📊 Ekonomi / Manajemen / Akuntansi / Bisnis</option>
+                                <option value="pendidikan">🎓 Pendidikan / Keguruan / Pengajaran</option>
+                                <option value="kesehatan">🏥 Kesehatan / Keperawatan / Farmasi / Kesmas</option>
+                                <option value="sosial">💬 Ilmu Sosial / Komunikasi / Hukum / Politik</option>
+                                <option value="sains">🔬 Sains / Biologi / Pertanian / Peternakan</option>
+                                <option value="psikologi">🧠 Psikologi / Bimbingan Konseling</option>
+                                <option value="teknik_sipil">🏗️ Teknik Sipil / Arsitektur / PWK</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topik Spesifik / Sub-bidang -->
+                    <div>
+                        <label for="subtopik" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                            2. Sub-Fokus / Spesialisasi
+                        </label>
+                        <input type="text" id="subtopik" placeholder="Contoh: Machine Learning, Digital Marketing, Keperawatan Anak"
+                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                    </div>
+
+                    <!-- Kata Kunci / Objek Spesifik -->
+                    <div>
+                        <label for="keyword" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                            <span>3. Kata Kunci / Variabel Utama</span>
+                            <span class="text-[10px] text-indigo-400 font-normal">Wajib</span>
+                        </label>
+                        <input type="text" id="keyword" placeholder="Contoh: Sentiment Analysis, Brand Loyalty, Stunting, Hydroponic" required
+                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                    </div>
+
+                    <!-- Metode Penelitian -->
+                    <div>
+                        <label for="metode" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                            4. Metode / Pendekatan Penelitian
+                        </label>
+                        <div class="relative">
+                            <select id="metode" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 appearance-none cursor-pointer">
+                                <option value="Kuantitatif">📊 Kuantitatif (Analisis Statistik / Survei / Eksperimen)</option>
+                                <option value="Kualitatif">🔍 Kualitatif (Deskriptif / Studi Kasus / Etnografi)</option>
+                                <option value="R&D">🛠️ Research & Development (R&D / Pengembangan Sistem)</option>
+                                <option value="Mixed Methods">🔄 Campuran (Mixed Methods / Kombinasi)</option>
+                                <option value="Systematic Literature Review">📚 Systematic Literature Review (SLR / Meta-Analisis)</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lokasi / Objek Studi -->
+                    <div>
+                        <label for="lokasi" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                            5. Lokasi / Subjek Studi <span class="text-slate-500 font-normal normal-case">(Opsional)</span>
+                        </label>
+                        <input type="text" id="lokasi" placeholder="Contoh: PT XYZ, UMKM Kota Bandung, Rumah Sakit Umum"
+                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                    </div>
+
+                    <!-- Action Button -->
+                    <button type="submit" id="generateBtn" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 transition duration-200 flex items-center justify-center gap-2 mt-6 active:scale-[0.98]">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                        <span class="tracking-wide">Generate Judul Skripsi Pro</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Quick Tips Widget -->
+            <div class="glass-card rounded-2xl p-5 border border-indigo-500/20 bg-indigo-950/20">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb text-amber-400"></i> Formula Judul Disetujui Dospem
+                </h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Judul skripsi yang ideal mengandung formula: <br>
+                    <span class="text-indigo-400 font-medium">[Metode/Pendekatan] + [Variabel/Topik Utama] + [Subjek/Objek] + [Tujuan/Dampak]</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL: Display Results & Tools -->
+        <section class="lg:col-span-7 flex flex-col space-y-4">
+            
+            <!-- Navigation Tabs for Right Panel -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2 overflow-x-auto">
+                <div class="flex items-center gap-2">
+                    <button id="tabBtnRecommendations" onclick="switchTab('recommendations')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md transition flex items-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>Rekomendasi Judul</span>
+                        <span id="resultCountBadge" class="bg-indigo-800 text-indigo-100 text-[10px] px-2 py-0.5 rounded-full hidden">0</span>
+                    </button>
+                    
+                    <button id="tabBtnSaved" onclick="switchTab('saved')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition flex items-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-bookmark"></i>
+                        <span>Judul Tersimpan</span>
+                    </button>
+
+                    <button id="tabBtnSimulator" onclick="switchTab('simulator')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition flex items-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-user-doctor"></i>
+                        <span>Cek Dospem AI</span>
+                    </button>
+                </div>
+
+                <div class="hidden sm:flex items-center gap-2">
+                    <button onclick="exportAllSavedTitles()" title="Ekspor Semua Judul Tersimpan" class="text-xs text-slate-400 hover:text-indigo-400 p-2 rounded-lg hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-download"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 1: Recommendations View -->
+            <div id="viewRecommendations" class="space-y-4">
+                
+                <!-- Placeholder Empty State -->
+                <div id="placeholderState" class="glass-card rounded-2xl flex flex-col items-center justify-center p-10 text-center min-h-[420px]">
+                    <div class="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-400 mb-4 text-3xl border border-indigo-500/20">
+                        <i class="fa-solid fa-compass-drafting"></i>
+                    </div>
+                    <h3 class="text-slate-200 font-bold text-lg mb-1">Siap Menyusun Judul Skripsi Impian Anda?</h3>
+                    <p class="text-xs text-slate-400 max-w-md mb-6 leading-relaxed">
+                        Isi rumpun ilmu dan kata kunci penelitian Anda di formulir sebelah kiri, lalu tekan tombol **Generate** untuk melihat puluhan ide skripsi yang siap diajukan.
+                    </p>
+                    <button onclick="triggerQuickRandomize()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-amber-400"></i> Coba Contoh Acak
+                    </button>
+                </div>
+
+                <!-- Loading State Spinner -->
+                <div id="loadingState" class="hidden glass-card rounded-2xl flex-col items-center justify-center p-12 text-center min-h-[420px]">
+                    <div class="relative mb-4">
+                        <div class="w-14 h-14 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin"></div>
+                        <div class="absolute inset-0 flex items-center justify-center text-indigo-400 text-sm">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-slate-200 font-semibold text-sm mb-1">Menganalisis Rumpun Ilmu & Metodologi...</h3>
+                    <p class="text-xs text-slate-400">Meracik variabel, rumusan masalah, dan latar belakang rekomendasi judul...</p>
+                </div>
+
+                <!-- Results Container -->
+                <div id="resultsContainer" class="hidden space-y-4 max-h-[680px] overflow-y-auto pr-1"></div>
+            </div>
+
+            <!-- TAB 2: Saved / Bookmarked View -->
+            <div id="viewSaved" class="hidden space-y-4">
+                <div class="flex items-center justify-between bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                    <span class="text-xs text-slate-400" id="savedCountText">0 Judul Tersimpan</span>
+                    <button onclick="clearAllSaved()" class="text-xs text-rose-400 hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-trash-can"></i> Hapus Semua
+                    </button>
+                </div>
+
+                <div id="savedContainer" class="space-y-4 max-h-[620px] overflow-y-auto pr-1">
+                    <!-- Saved items rendered via JS -->
+                </div>
+            </div>
+
+            <!-- TAB 3: Dospem Simulator View -->
+            <div id="viewSimulator" class="hidden space-y-4">
+                <div class="glass-card rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center text-amber-400 text-lg border border-amber-500/30">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Simulator Uji Judul Dosen Pembimbing</h3>
+                            <p class="text-xs text-slate-400">Uji judul Anda terhadap pertanyaan kritis yang biasa ditanyakan dosen.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Masukan Judul Yang Ingin Diuji:</label>
+                        <textarea id="simulatorInputTitle" rows="3" placeholder="Paste atau ketik judul skripsi yang ingin diuji..."
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"></textarea>
+                    </div>
+
+                    <button onclick="analyzeTitleWithDospem()" class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs">
+                        <i class="fa-solid fa-microscope"></i> Analisis Kesiapan Judul Ini
+                    </button>
+
+                    <div id="simulatorResult" class="hidden mt-4 pt-4 border-t border-slate-800 space-y-3">
+                        <!-- Simulated Feedback rendered here -->
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Proposal Breakdown Detail Modal -->
+    <div id="proposalModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="glass-card bg-slate-900 border border-slate-700/80 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-contract text-indigo-400"></i>
+                    <h3 class="font-bold text-sm text-white">Draft Struktur Proposal Skripsi</h3>
+                </div>
+                <button onclick="closeProposalModal()" class="text-slate-400 hover:text-white transition text-lg px-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6 overflow-y-auto space-y-5 text-xs leading-relaxed text-slate-300" id="proposalModalContent">
+                <!-- Content inserted via JS -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex items-center justify-between">
+                <button onclick="copyProposalDraft()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2 text-xs">
+                    <i class="fa-regular fa-copy"></i> Salin Seluruh Draft
+                </button>
+                <button onclick="closeProposalModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-2 rounded-xl transition text-xs">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-4 mt-auto text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 text-center flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>
+                &copy; 2026 <strong class="text-slate-400">SkripsiGen AI Pro</strong> — Asisten Akademik & Generator Judul Skripsi Otomatis.
+            </div>
+            <div class="flex items-center gap-4 text-slate-400">
+                <span><i class="fa-solid fa-shield-halved text-indigo-400"></i> Bebas Plagiarisme</span>
+                <span><i class="fa-solid fa-bolt text-amber-400"></i> Responsif & Cepat</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const templatesData = {
+            informatika: [
+                {
+                    tpl: "Rancang Bangun Sistem {keyword} Berbasis Web/Mobile Menggunakan Pendekatan {metode} Pada {lokasi}",
+                    difficulty: "Sedang",
+                    duration: "3 - 4 Bulan",
+                    background: "Penggunaan sistem konvensional di {lokasi} kerap menghadapi kendala efisiensi. Penerapan teknologi berbasis {keyword} menjadi solusi relevan.",
+                    problems: [
+                        "Bagaimana merancang sistem {keyword} yang responsif dan terintegrasi?",
+                        "Seberapa tinggi tingkat efisiensi operasional di {lokasi} setelah implementasi?"
+                    ],
+                    variables: "Variabel Bebas: Sistem {keyword}, Variabel Terikat: Efisiensi Operasional {lokasi}"
+                },
+                {
+                    tpl: "Penerapan Algoritma {keyword} Untuk Mengoptimalkan Rekomendasi Dan Prediksi Data Pada {lokasi}",
+                    difficulty: "Tinggi",
+                    duration: "4 - 5 Bulan",
+                    background: "Volume data yang melimpah di {lokasi} belum dimanfaatkan secara optimal tanpa ketersediaan model prediksi cerdas.",
+                    problems: [
+                        "Bagaimana akurasi algoritma {keyword} dalam mengolah dataset {lokasi}?",
+                        "Berapa nilai error (RMSE/MAE) dari model yang dikembangkan?"
+                    ],
+                    variables: "Variabel Bebas: Algoritma {keyword}, Variabel Terikat: Akurasi Prediksi"
+                },
+                {
+                    tpl: "Analisis Performa Dan Evaluasi User Experience (UX) Pada Penerapan {keyword} Menggunakan Metode {metode}",
+                    difficulty: "Mudah",
+                    duration: "2 - 3 Bulan",
+                    background: "Penerapan {keyword} di {lokasi} membutuhkan evaluasi usability mendalam agar sesuai dengan kebutuhan pengguna akhir.",
+                    problems: [
+                        "Bagaimana tingkat kepuasan pengguna (System Usability Scale) terhadap {keyword}?",
+                        "Apa aspek prioritas perbaikan yang perlu ditingkatkan?"
+                    ],
+                    variables: "Variabel Bebas: Antarmuka {keyword}, Variabel Terikat: User Satisfaction Score"
+                },
+                {
+                    tpl: "Pengembangan Sistem Keamanan Dan Deteksi Anomali Berbasis {keyword} Pada Infrastruktur {lokasi}",
+                    difficulty: "Tinggi",
+                    duration: "4 - 6 Bulan",
+                    background: "Ancaman siber dan insiden keamanan pada sistem {lokasi} berpotensi merugikan aset digital.",
+                    problems: [
+                        "Seberapa cepat sistem berbasis {keyword} mendeteksi ancaman keamanan?",
+                        "Bagaimana tingkat presisi dan recall dari metode deteksi yang diuji?"
+                    ],
+                    variables: "Variabel Bebas: Modul {keyword}, Variabel Terikat: Security Threat Detection Rate"
+                }
+            ],
+            ekonomi: [
+                {
+                    tpl: "Pengaruh Penerapan {keyword} Terhadap Kinerja Keuangan Dan Volume Penjualan Pada {lokasi}",
+                    difficulty: "Sedang",
+                    duration: "3 - 4 Bulan",
+                    background: "Dinamika pasar menuntut {lokasi} untuk terus beradaptasi dengan strategi {keyword} agar kinerja tetap positif.",
+                    problems: [
+                        "Apakah {keyword} berpengaruh signifikan secara parsial dan simultan terhadap kinerja bisnis?",
+                        "Seberapa besar determinasi (R-Square) strategi {keyword} terhadap profitabilitas?"
+                    ],
+                    variables: "Variabel X: {keyword}, Variabel Y: Kinerja Keuangan / Penjualan"
+                },
+                {
+                    tpl: "Analisis Strategi Bisnis Berbasis {keyword} Dalam Meningkatkan Daya Saing Operasional {lokasi}",
+                    difficulty: "Mudah",
+                    duration: "2 - 3 Bulan",
+                    background: "Persaingan usaha yang ketat mengharuskan {lokasi} merumuskan strategi keberlanjutan berbasis {keyword}.",
+                    problems: [
+                        "Bagaimana pemetaan analisis SWOT pada penerapan {keyword} di {lokasi}?",
+                        "Langkah taktis apa yang paling efektif diimplementasikan?"
+                    ],
+                    variables: "Fokus Analisis: Strategi Bisnis, Matriks EFE & IFE, SWOT {keyword}"
+                },
+                {
+                    tpl: "Pengaruh {keyword} Dan Digitalisasi Terhadap Perilaku Keputusan Pembelian Konsumen Pada {lokasi}",
+                    difficulty: "Sedang",
+                    duration: "3 Bulan",
+                    background: "Perubahan perilaku konsumen memaksa {lokasi} mengoptimalkan {keyword} sebagai daya tarik transaksi.",
+                    problems: [
+                        "Bagaimana persepsi kemudahan dan manfaat {keyword} mempengaruhi keputusan konsumen?",
+                        "Apakah terdapat variabel moderasi yang memperkuat pengaruh tersebut?"
+                    ],
+                    variables: "Variabel X1: {keyword}, Variabel X2: Digitalisasi, Variabel Y: Keputusan Pembelian"
+                }
+            ],
+            pendidikan: [
+                {
+                    tpl: "Pengaruh Penggunaan Media Pembelajaran Interaktif Berbasis {keyword} Terhadap Hasil Belajar Di {lokasi}",
+                    difficulty: "Sedang",
+                    duration: "3 - 4 Bulan",
+                    background: "Rendahnya keterlibatan siswa pada materi pembelajaran melatarbelakangi perlunya media interaktif {keyword}.",
+                    problems: [
+                        "Apakah terdapat perbedaan signifikan hasil belajar siswa sebelum dan sesudah menggunakan {keyword}?",
+                        "Seberapa besar peningkatan gain score siswa?"
+                    ],
+                    variables: "Variabel X: Media {keyword}, Variabel Y: Hasil Belajar / Motvasi Siswa"
+                },
+                {
+                    tpl: "Pengembangan Model Pembelajaran Berbasis {keyword} Untuk Meningkatkan Keterampilan Berpikir Kritis Di {lokasi}",
+                    difficulty: "Sedang",
+                    duration: "3 - 5 Bulan",
+                    background: "Keterampilan higher-order thinking (HOTS) perlu dilatih melalui metode inovatif seperti {keyword}.",
+                    problems: [
+                        "Bagaimana kevalidan dan kepraktisan model pembelajaran {keyword} yang dikembangkan?",
+                        "Apakah model ini efektif meningkatkan kemampuan pemecahan masalah?"
+                    ],
+                    variables: "Objek Pengembangan: Model Pembelajaran {keyword}, Parameter: Validitas, Kepraktisan, Efektivitas"
+                }
+            ],
+            kesehatan: [
+                {
+                    tpl: "Analisis Faktor Risiko Dan Hubungan Penerapan {keyword} Terhadap Peningkatan Status Kesehatan Di {lokasi}",
+                    difficulty: "Sedang",
+                    duration: "3 - 4 Bulan",
+                    background: "Masalah kesehatan masyarakat di {lokasi} membutuhkan intervensi terukur berbasis {keyword}.",
+                    problems: [
+                        "Faktor manakah yang paling dominan berhubungan dengan intervensi {keyword}?",
+                        "Bagaimana nilai Odds Ratio (OR) antar variabel kesehatan yang diteliti?"
+                    ],
+                    variables: "Variabel Independen: {keyword}, Variabel Dependen: Status Kesehatan Masyarakat"
+                },
+                {
+                    tpl: "Evaluasi Efektivitas Program {keyword} Dalam Menurunkan Angka Kejadian Penyakit Pada {lokasi}",
+                    difficulty: "Mudah",
+                    duration: "3 Bulan",
+                    background: "Evaluasi program kesehatan berkala penting untuk memastikan efisiensi penanganan {keyword} di lapangan.",
+                    problems: [
+                        "Bagaimana ketercapaian target kuantitatif program {keyword} di {lokasi}?",
+                        "Apa kendala utama implemetasi program di tingkat pelayanan primer?"
+                    ],
+                    variables: "Fokus Evaluasi: Program {keyword}, Parameter: Input, Proses, Output"
+                }
+            ],
+            sosial: [
+                {
+                    tpl: "Analisis Resepsi Dan Framing Media Terhadap Isu {keyword}: Studi Kasus Di {lokasi}",
+                    difficulty: "Mudah",
+                    duration: "2 - 3 Bulan",
+                    background: "Pemberitaan seputar {keyword} membentuk persepsi opini publik yang beragam di {lokasi}.",
+                    problems: [
+                        "Bagaimana perangkat konstruksi berita/isu {keyword} ditampilkan media?",
+                        "Bagaimana khalayak memaknai pesan media tersebut?"
+                    ],
+                    variables: "Fokus Analisis: Framing Isu {keyword}, Teks & Konstruksi Realitas"
+                },
+                {
+                    tpl: "Implikasi Hukum Dan Tinjauan Yuridis Mengenai Regulasi {keyword} Pada Instansi {lokasi}",
+                    difficulty: "Sedang",
+                    duration: "3 Bulan",
+                    background: "Kepastian hukum terkait {keyword} masih memerlukan kajian mendalam terhadap aturan turunan di {lokasi}.",
+                    problems: [
+                        "Bagaimana kesesuaian norma hukum penerapan {keyword} dengan undang-undang yang berlaku?",
+                        "Solusi hukum apa yang tepat untuk menangani kekosongan aturan tersebut?"
+                    ],
+                    variables: "Pendekatan Yuridis Normatif / Sosiologis, Objek: Regulasi {keyword}"
+                }
+            ],
+            sains: [
+                {
+                    tpl: "Uji Efektivitas Dan Analisis Karakteristik {keyword} Menggunakan Metode {metode} Pada {lokasi}",
+                    difficulty: "Tinggi",
+                    duration: "4 - 5 Bulan",
+                    background: "Eksplorasi potensi lokal {keyword} memiliki prospek tinggi untuk aplikasi industri dan kelestarian di {lokasi}.",
+                    problems: [
+                        "Berapa konsentrasi optimal {keyword} untuk menghasilkan efek terbaik?",
+                        "Bagaimana profil spektroskopi/sifat fisik sampel yang diuji?"
+                    ],
+                    variables: "Variabel Bebas: Variasi Konsentrasi {keyword}, Variabel Terikat: Parameter Efektivitas Baku"
+                }
+            ],
+            psikologi: [
+                {
+                    tpl: "Hubungan Antara {keyword} Dan Tingkat Resiliensi Terhadap Burnout Pada Pekerja / Siswa Di {lokasi}",
+                    difficulty: "Sedang",
+                    duration: "3 Bulan",
+                    background: "Tekanan mental dan stres operasional menuntut pemahaman mendalam tentang peran {keyword}.",
+                    problems: [
+                        "Apakah terdapat hubungan positif yang signifikan antara {keyword} dan resiliensi?",
+                        "Seberapa besar kontribusi efektif {keyword} terhadap variabel burnout?"
+                    ],
+                    variables: "Variabel X: {keyword}, Variabel Y: Resiliensi / Burnout Score"
+                }
+            ],
+            teknik_sipil: [
+                {
+                    tpl: "Analisis Kelayakan Dan Perencanaan Struktur {keyword} Berkelanjutan Pada Proyek {lokasi}",
+                    difficulty: "Tinggi",
+                    duration: "4 - 5 Bulan",
+                    background: "Inovasi material dan rancangan {keyword} diperlukan untuk meningkatkan efisiensi biaya dan keamanan struktur di {lokasi}.",
+                    problems: [
+                        "Bagaimana tingkat kekuatan tekan/tarik material {keyword} berdasarkan standar SNI?",
+                        "Berapa nilai angka keamanan (Safety Factor) struktur yang dirancang?"
+                    ],
+                    variables: "Parameter Evaluasi: Kuat Tekan, Safety Factor, Biaya Struktur {keyword}"
+                }
+            ]
+        };
+
+        // Quick random preset choices for quick generation
+        const quickRandomPresets = [
+            { jurusan: 'informatika', subtopik: 'Artificial Intelligence', keyword: 'Computer Vision & Deep Learning', metode: 'Kuantitatif', lokasi: 'Sistem Deteksi Lalu Lintas' },
+            { jurusan: 'ekonomi', subtopik: 'Pemasaran Digital', keyword: 'Omnichannel Marketing', metode: 'Kuantitatif', lokasi: 'UMKM Sektor Kuliner' },
+            { jurusan: 'pendidikan', subtopik: 'Teknologi Pembelajaran', keyword: 'Gamifikasi Quizizz', metode: 'R&D', lokasi: 'SMA Negeri 1' },
+            { jurusan: 'kesehatan', subtopik: 'Kesehatan Masyarakat', keyword: 'Pencegahan Stunting Balita', metode: 'Kualitatif', lokasi: 'Puskesmas Wilayah Pesisir' },
+            { jurusan: 'sosial', subtopik: 'Ilmu Komunikasi', keyword: 'Personal Branding TikTok', metode: 'Kualitatif', lokasi: 'Generasi Z Kota Surabaya' }
+        ];
+
+        let generatedResults = [];
+        let savedTitles = JSON.parse(localStorage.getItem('skripsigen_saved_titles') || '[]');
+
+        // DOM Element references
+        const form = document.getElementById('generatorForm');
+        const placeholderState = document.getElementById('placeholderState');
+        const loadingState = document.getElementById('loadingState');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultCountBadge = document.getElementById('resultCountBadge');
+        const savedBadgeCount = document.getElementById('savedBadgeCount');
+
+        // On Page Load
+        window.addEventListener('DOMContentLoaded', () => {
+            updateSavedBadge();
+            renderSavedTitles();
+        });
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const jurusan = document.getElementById('jurusan').value;
+            const subtopik = document.getElementById('subtopik').value.trim() || "Spesialisasi Umum";
+            const keyword = document.getElementById('keyword').value.trim();
+            const metode = document.getElementById('metode').value;
+            let lokasi = document.getElementById('lokasi').value.trim();
+
+            if (!lokasi) {
+                lokasi = "Studi Kasus Instansi / Lembaga Terkait";
+            }
+
+            // UI Transitions
+            placeholderState.classList.add('hidden');
+            resultsContainer.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            loadingState.classList.add('flex');
+
+            setTimeout(() => {
+                generateTitles(jurusan, subtopik, keyword, metode, lokasi);
+                loadingState.classList.add('hidden');
+                loadingState.classList.remove('flex');
+                resultsContainer.classList.remove('hidden');
+            }, 500);
+        });
+
+        function generateTitles(jurusan, subtopik, keyword, metode, lokasi) {
+            const list = templatesData[jurusan] || templatesData['informatika'];
+            resultsContainer.innerHTML = '';
+            generatedResults = [];
+
+            list.forEach((item, index) => {
+                const titleText = item.tpl
+                    .replace(/{keyword}/g, keyword)
+                    .replace(/{metode}/g, metode)
+                    .replace(/{lokasi}/g, lokasi);
+
+                const titleObj = {
+                    id: 'gen_' + Date.now() + '_' + index,
+                    title: titleText,
+                    jurusan: jurusan,
+                    subtopik: subtopik,
+                    keyword: keyword,
+                    metode: metode,
+                    lokasi: lokasi,
+                    difficulty: item.difficulty,
+                    duration: item.duration,
+                    background: item.background.replace(/{keyword}/g, keyword).replace(/{lokasi}/g, lokasi),
+                    problems: item.problems.map(p => p.replace(/{keyword}/g, keyword).replace(/{lokasi}/g, lokasi)),
+                    variables: item.variables.replace(/{keyword}/g, keyword).replace(/{lokasi}/g, lokasi)
+                };
+
+                generatedResults.push(titleObj);
+
+                const card = createTitleCardElement(titleObj, index);
+                resultsContainer.appendChild(card);
+            });
+
+            resultCountBadge.textContent = `${generatedResults.length} Judul`;
+            resultCountBadge.classList.remove('hidden');
+        }
+
+        function createTitleCardElement(item, index) {
+            const isSaved = savedTitles.some(s => s.title === item.title);
+
+            let diffColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+            if (item.difficulty === "Tinggi") diffColor = "bg-rose-500/10 text-rose-400 border-rose-500/20";
+            if (item.difficulty === "Sedang") diffColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+
+            const card = document.createElement('div');
+            card.className = "glass-card glass-card-hover rounded-2xl p-5 border border-slate-800 space-y-3 relative group";
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-lg">
+                            Opsi #${index + 1}
+                        </span>
+                        <span class="text-[10px] font-semibold border px-2 py-0.5 rounded-lg ${diffColor}">
+                            <i class="fa-solid fa-gauge-high mr-1"></i>${item.difficulty}
+                        </span>
+                        <span class="text-[10px] font-medium text-slate-400 bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700">
+                            <i class="fa-regular fa-clock mr-1"></i>Est. ${item.duration}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="toggleSaveTitle('${item.id}')" id="bookmarkBtn_${item.id}" class="text-xs ${isSaved ? 'text-amber-400 bg-amber-400/10' : 'text-slate-400 bg-slate-800 hover:text-amber-400'} border border-slate-700 p-2 rounded-xl transition" title="Simpan ke Favorit">
+                            <i class="fa-${isSaved ? 'solid' : 'regular'} fa-bookmark"></i>
+                        </button>
+                        <button onclick="copyToClipboard(this, \`${item.title}\`)" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-regular fa-copy"></i>
+                            <span class="hidden sm:inline">Salin</span>
+                        </button>
+                    </div>
+                </div>
+
+                <h3 class="font-bold text-slate-100 text-base leading-snug tracking-tight hover:text-indigo-300 transition">
+                    ${item.title}
+                </h3>
+
+                <div class="grid grid-cols-2 gap-2 text-xs text-slate-400 pt-2 border-t border-slate-800/80">
+                    <div><strong class="text-slate-300">Pendekatan:</strong> ${item.metode}</div>
+                    <div class="truncate"><strong class="text-slate-300">Variabel:</strong> ${item.keyword}</div>
+                </div>
+
+                <div class="pt-2 flex items-center gap-2">
+                    <button onclick="openProposalModal('${item.id}')" class="w-full bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-semibold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-pen text-indigo-400"></i> lihat Draft Proposal & Breakdown
+                    </button>
+                    <button onclick="testInSimulator('${item.title}')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs py-2 px-3 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap" title="Uji di Dospem Simulator">
+                        <i class="fa-solid fa-vial-circle-check text-amber-400"></i> Uji AI
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        function toggleSaveTitle(id) {
+            let item = generatedResults.find(g => g.id === id);
+            if (!item) {
+                item = savedTitles.find(s => s.id === id);
+            }
+            if (!item) return;
+
+            const existingIndex = savedTitles.findIndex(s => s.title === item.title);
+
+            if (existingIndex >= 0) {
+                savedTitles.splice(existingIndex, 1);
+                showToast("Judul dihapus dari tersimpan", "info");
+            } else {
+                savedTitles.push(item);
+                showToast("Judul berhasil disimpan ke Favorit!", "success");
+            }
+
+            localStorage.setItem('skripsigen_saved_titles', JSON.stringify(savedTitles));
+            updateSavedBadge();
+            renderSavedTitles();
+
+            // Refresh bookmark button icon if in recommendation view
+            const btn = document.getElementById(`bookmarkBtn_${id}`);
+            if (btn) {
+                const isSaved = savedTitles.some(s => s.title === item.title);
+                btn.className = `text-xs ${isSaved ? 'text-amber-400 bg-amber-400/10' : 'text-slate-400 bg-slate-800 hover:text-amber-400'} border border-slate-700 p-2 rounded-xl transition`;
+                btn.innerHTML = `<i class="fa-${isSaved ? 'solid' : 'regular'} fa-bookmark"></i>`;
+            }
+        }
+
+        function updateSavedBadge() {
+            savedBadgeCount.textContent = savedTitles.length;
+            document.getElementById('savedCountText').textContent = `${savedTitles.length} Judul Tersimpan`;
+        }
+
+        function renderSavedTitles() {
+            const container = document.getElementById('savedContainer');
+            container.innerHTML = '';
+
+            if (savedTitles.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-card rounded-2xl p-8 text-center text-slate-400 space-y-2">
+                        <i class="fa-solid fa-bookmark text-3xl text-slate-600 mb-2"></i>
+                        <p class="text-xs">Belum ada judul yang Anda simpan.</p>
+                        <p class="text-[11px] text-slate-500">Klik ikon bookmark pada rekomendasi judul untuk menyimpannya ke sini.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            savedTitles.forEach((item, index) => {
+                const card = createTitleCardElement(item, index);
+                container.appendChild(card);
+            });
+        }
+
+        function clearAllSaved() {
+            if (savedTitles.length === 0) return;
+            savedTitles = [];
+            localStorage.setItem('skripsigen_saved_titles', JSON.stringify([]));
+            updateSavedBadge();
+            renderSavedTitles();
+            showToast("Semua judul tersimpan telah dibersihkan", "info");
+        }
+
+        let currentModalItem = null;
+
+        function openProposalModal(id) {
+            let item = generatedResults.find(g => g.id === id) || savedTitles.find(s => s.id === id);
+            if (!item) return;
+
+            currentModalItem = item;
+            const modalContent = document.getElementById('proposalModalContent');
+
+            modalContent.innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-indigo-950/40 p-4 rounded-xl border border-indigo-500/20">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 block mb-1">Judul Terpilih:</span>
+                        <h4 class="font-bold text-sm text-white leading-snug">${item.title}</h4>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 font-medium">Metode / Pendekatan:</span>
+                            <div class="font-bold text-slate-200 mt-0.5">${item.metode}</div>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 font-medium">Estimasi Waktu Pengerjaan:</span>
+                            <div class="font-bold text-amber-400 mt-0.5">${item.duration}</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h5 class="font-bold text-slate-200 text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-align-left text-indigo-400"></i> Latar Belakang Ringkas (Bab 1)
+                        </h5>
+                        <p class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 leading-relaxed text-slate-300">
+                            ${item.background}
+                        </p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h5 class="font-bold text-slate-200 text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-question text-indigo-400"></i> Rumusan Masalah Utama
+                        </h5>
+                        <ul class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 list-disc list-inside space-y-1 text-slate-300">
+                            ${item.problems.map(p => `<li>${p}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h5 class="font-bold text-slate-200 text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-diagram-project text-indigo-400"></i> Pemetaan Variabel / Objek
+                        </h5>
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-slate-300">
+                            ${item.variables}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('proposalModal').classList.remove('hidden');
+        }
+
+        function closeProposalModal() {
+            document.getElementById('proposalModal').classList.add('hidden');
+        }
+
+        function copyProposalDraft() {
+            if (!currentModalItem) return;
+
+            const text = `
+DRAFT SKRIPSI / PROPOSAL
+========================
+JUDUL:
+${currentModalItem.title}
+
+METODE: ${currentModalItem.metode}
+ESTIMASI PENGERJAAN: ${currentModalItem.duration}
+
+LATAR BELAKANG RINGKAS:
+${currentModalItem.background}
+
+RUMUSAN MASALAH:
+${currentModalItem.problems.map((p, i) => `${i+1}. ${p}`).join('\n')}
+
+VARIABEL / MAP DATA:
+${currentModalItem.variables}
+            `.trim();
+
+            copyToClipboard(null, text);
+            showToast("Draft proposal berhasil disalin!", "success");
+        }
+
+        function testInSimulator(title) {
+            switchTab('simulator');
+            document.getElementById('simulatorInputTitle').value = title;
+            analyzeTitleWithDospem();
+        }
+
+        function analyzeTitleWithDospem() {
+            const title = document.getElementById('simulatorInputTitle').value.trim();
+            const resultBox = document.getElementById('simulatorResult');
+
+            if (!title) {
+                showToast("Masukkan judul terlebih dahulu", "info");
+                return;
+            }
+
+            resultBox.classList.remove('hidden');
+            resultBox.innerHTML = `
+                <div class="flex items-center gap-2 text-xs font-bold text-amber-400 mb-2">
+                    <i class="fa-solid fa-comments"></i> Tanggapan Simulasi Dosen Pembimbing:
+                </div>
+                
+                <div class="space-y-2.5 text-xs">
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="font-bold text-emerald-400">✓ Kelebihan:</span>
+                        <p class="text-slate-300 mt-1">Struktur judul sudah memiliki objek dan pendekatan yang spesifik. Luaran hasil penelitian terlihat jelas.</p>
+                    </div>
+
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <span class="font-bold text-amber-400">❓ Pertanyaan Dosen Saat Seminar Proposal:</span>
+                        <ul class="list-disc list-inside text-slate-300 mt-1 space-y-1">
+                            <li>"Apa alasan utama memilih lokasi/objek penelitian ini dibanding lokasi lain?"</li>
+                            <li>"Bagaimana ketersediaan data primer/sekunder untuk mendukung variabel ini?"</li>
+                            <li>"Apa urgensi & kebaruan (novelty) dari judul skripsi kamu ini?"</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-indigo-950/40 p-3 rounded-xl border border-indigo-500/20 text-indigo-300">
+                        <strong>💡 Tips Lolos Seminar:</strong> Siapkan jurnal acuan (minimal 3-5 jurnal nasional/internasional) yang mendukung kaitan variabel dalam judul ini!
+                    </div>
+                </div>
+            `;
+        }
+
+        function triggerQuickRandomize() {
+            const random = quickRandomPresets[Math.floor(Math.random() * quickRandomPresets.length)];
+            document.getElementById('jurusan').value = random.jurusan;
+            document.getElementById('subtopik').value = random.subtopik;
+            document.getElementById('keyword').value = random.keyword;
+            document.getElementById('metode').value = random.metode;
+            document.getElementById('lokasi').value = random.lokasi;
+
+            switchTab('recommendations');
+            form.dispatchEvent(new Event('submit'));
+            showToast("Inspirasi acak dimuat!", "info");
+        }
+
+        function resetForm() {
+            form.reset();
+            resultsContainer.innerHTML = '';
+            resultsContainer.classList.add('hidden');
+            placeholderState.classList.remove('hidden');
+            resultCountBadge.classList.add('hidden');
+            showToast("Formulir telah di-reset", "info");
+        }
+
+        function switchTab(tabName) {
+            const viewRecommendations = document.getElementById('viewRecommendations');
+            const viewSaved = document.getElementById('viewSaved');
+            const viewSimulator = document.getElementById('viewSimulator');
+
+            const btnRec = document.getElementById('tabBtnRecommendations');
+            const btnSaved = document.getElementById('tabBtnSaved');
+            const btnSim = document.getElementById('tabBtnSimulator');
+
+            // Hide all
+            viewRecommendations.classList.add('hidden');
+            viewSaved.classList.add('hidden');
+            viewSimulator.classList.add('hidden');
+
+            btnRec.className = "px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition flex items-center gap-2 whitespace-nowrap";
+            btnSaved.className = "px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition flex items-center gap-2 whitespace-nowrap";
+            btnSim.className = "px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition flex items-center gap-2 whitespace-nowrap";
+
+            if (tabName === 'recommendations') {
+                viewRecommendations.classList.remove('hidden');
+                btnRec.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md transition flex items-center gap-2 whitespace-nowrap";
+            } else if (tabName === 'saved') {
+                viewSaved.classList.remove('hidden');
+                btnSaved.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md transition flex items-center gap-2 whitespace-nowrap";
+            } else if (tabName === 'simulator') {
+                viewSimulator.classList.remove('hidden');
+                btnSim.className = "px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md transition flex items-center gap-2 whitespace-nowrap";
+            }
+        }
+
+        function copyToClipboard(btn, text) {
+            // Dual copy strategy for maximum browser compatibility
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text);
+            } else {
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                textarea.style.position = "fixed";
+                textarea.style.left = "-999999px";
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                } catch (err) {}
+                document.body.removeChild(textarea);
+            }
+
+            if (btn) {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> <span class="text-emerald-400">Tersalin</span>`;
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                }, 2000);
+            }
+            showToast("Judul tersalin ke clipboard!", "success");
+        }
+
+        function exportAllSavedTitles() {
+            if (savedTitles.length === 0) {
+                showToast("Tidak ada judul tersimpan untuk diekspor", "info");
+                return;
+            }
+
+            let fileContent = "DAFTAR REKOMENDASI JUDUL SKRIPSI TERSELEKSI\n";
+            fileContent += "Di-generate via SkripsiGen AI Pro\n";
+            fileContent += "========================================\n\n";
+
+            savedTitles.forEach((item, index) => {
+                fileContent += `${index + 1}. ${item.title}\n`;
+                fileContent += `   Metode    : ${item.metode}\n`;
+                fileContent += `   Kesulitan : ${item.difficulty} (Est: ${item.duration})\n`;
+                fileContent += `   Latar Blk : ${item.background}\n\n`;
+            });
+
+            const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "Rekomendasi_Judul_Skripsi.txt";
+            link.click();
+            showToast("File Rekomendasi_Judul_Skripsi.txt diunduh!", "success");
+        }
+
+        function showToast(message, type = "success") {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+
+            let icon = type === "success" ? "fa-circle-check text-emerald-400" : "fa-circle-info text-indigo-400";
+
+            toast.className = "pointer-events-auto bg-slate-900 border border-slate-700/80 text-slate-100 text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 transition-all transform translate-y-2 opacity-0";
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
